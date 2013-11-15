@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo ""
+echo "ArmA 2 - Operation Arrowhead - Linux Dedicated Server 1.62"
+
+echo "Converting ArmA 2 OA directory:"
+gcc -O -o tolower tolower.c
+./tolower
+chmod +w *
+rm -f *.exe *.chm *.dll tolower.o
+rm -f battleye/*.dll
+rm -f expansion/*.dll
+rm -f expansion/battleye/*.dll
+
+echo "ArmA 2 - Operation Arrowhead Server was installed."
+exit 0
+
