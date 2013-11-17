@@ -15,7 +15,7 @@ use constant {
     DB_LOGIN  => 'dayz',  # Set database login
     DB_PASSWD => 'dayz',  # Set database password
 
-    CACHE_DIR => '/home/devd/epoch/cache/',
+    CACHE_DIR => $ENV{'PWD'}.'/cache/',
     INVENTORY => '[["ItemFlashlight","ItemMap","ItemGPS","MeleeCrowbar"],["ItemBandage","ItemPainkiller","ItemSodaPepsi","ItemSodaCoke","FoodbeefCooked"]]',
     BACKPACK  => '["DZ_Patrol_Pack_EP1",[],[]]',
     MODEL     => '"Survivor2_DZ"'
