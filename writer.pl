@@ -118,9 +118,16 @@ sub update_players_cache {
     my $res = $sth->execute ();
     return unless $res;
     
+    my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
+    mkdir ($PLAYERS_DIR) unless (-d $PLAYERS_DIR);
+    
     my @uids = ();
     while (my ($playerId) = $sth->fetchrow_array) {
-        push @uids, $playerId if $playerId;
+        next unless $playerId;
+        my $file = $PLAYERS_DIR.'/'.$playerId.'.sqf';
+        next if (-f $file);
+    
+        push @uids, $playerId;
     }
     $sth->finish;
     return unless @uids;

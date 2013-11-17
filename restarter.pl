@@ -28,7 +28,7 @@ if (-f PIDFILE) {
     print STDERR $res,"\n" if $res;
    
     unlink (PIDFILE) if (-f PIDFILE);    
-    clean_cache();
+    backup_cache();
 }
 
 print STDERR "Restart Dayz Epoch server...\n";
@@ -72,16 +72,17 @@ sub logrotate {
     }
 }
 
-sub clean_cache {
+sub backup_cache {
     return unless (-d CACHE_DIR);
     opendir (DIR, CACHE_DIR) or die $!;
 
     while (my $file = readdir (DIR)) {
-        next unless ($file =~ m/^\d+$/);
-        my $dir = CACHE_DIR.'/'.$file;
+        next unless ($file =~ m/^\d+$/ && $file ne '1');
+        my $dir    = CACHE_DIR.'/'.$file;
+        my $backup = CACHE_DIR.'/1';
         next unless (-d $dir);
         
-        my $res = `rm -rf $dir 2>&1`;
+        my $res = `mv -f $dir $backup 2>&1`;
         print STDERR $res,"\n" if $res;
     }
 
