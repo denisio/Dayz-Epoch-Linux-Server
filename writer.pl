@@ -86,6 +86,16 @@ sub connect_to_db {
     return $dbh;
 }
 
+sub parse_json {
+    my $str = shift;
+    return unless $str;
+    
+    my $data;
+    eval { $data = $coder->decode ($str); };
+    return if $@;
+    return $data;
+}
+
 sub init_traders {
     h_load_trader_details();
 }
@@ -463,14 +473,44 @@ sub h_player_update {
     }
     $characterId =~ s/"//g;
     
-    my $ws = $coder->decode($worldSpace);
-    if ($ws && @$ws) {
-        if ($ws->[1] && ref($ws->[1]) eq 'ARRAY') {
-            my ($x, $y) = @{$ws->[1]};
-            if ($x && $x < -18000) {
-                print STDERR "Error h_player_update(): worldspace invalid!\n";
-                return;
+    if ($worldSpace) {
+        my $ws = parse_json ($worldSpace);
+        unless ($ws) {
+            print STDERR "Error h_player_update(): worldSpace invalid json!\n";
+            return;
+        }
+        if (@$ws) {
+            if ($ws->[1] && ref($ws->[1]) eq 'ARRAY') {
+                my ($x, $y) = @{$ws->[1]};
+                if ($x && $x < -18000) {
+                    print STDERR "Error h_player_update(): worldSpace invalid!\n";
+                    return;
+                }
             }
+        }
+    }
+    if ($inventory) {
+        unless ( parse_json ($inventory) ) {
+            print STDERR "Error h_player_update(): inventory invalid json!\n";
+            $inventory = undef;
+        }
+    }
+    if ($backpack) {
+        unless ( parse_json ($backpack) ) {
+            print STDERR "Error h_player_update(): backpack invalid json!\n";
+            $backpack = undef;
+        }
+    }
+    if ($medical) {
+        unless ( parse_json ($medical) ) {
+            print STDERR "Error h_player_update(): medical invalid json!\n";
+            $medical = undef;
+        }
+    }
+    if ($currentState) {
+        unless ( parse_json ($currentState) ) {
+            print STDERR "Error h_player_update(): currentState invalid json!\n";
+            $currentState = undef;
         }
     }
     
@@ -549,10 +589,10 @@ sub h_player_init {
     }
     $characterId =~ s/"//g;
     
-    my $sql = 'UPDATE Character_DATA SET Inventory=?, Backpack=? WHERE CharacterID=?';
-    my $sth = $dbh->prepare ($sql);
-    my $res = $sth->execute ($inventory, $backpack, $characterId);
-    return $res;
+    #my $sql = 'UPDATE Character_DATA SET Inventory=?, Backpack=? WHERE CharacterID=?';
+    #my $sth = $dbh->prepare ($sql);
+    #my $res = $sth->execute ($inventory, $backpack, $characterId);
+    #return $res;
 }
 
 # 204
@@ -670,6 +710,11 @@ sub h_object_update_inventory {
     }
     $objectId =~ s/"//g;
     
+    unless ( parse_json ($inventory) ) {
+        print STDERR "Error h_object_update_inventory($objectId): inventory invalid json!\n";
+        return;
+    }
+    
     my $serverId = INSTANCE;
     my $sql      = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectID=? AND Instance=?';
     my $sth      = $dbh->prepare ($sql);
@@ -692,6 +737,13 @@ sub h_object_delete {
     my $sql      = 'DELETE FROM Object_DATA WHERE ObjectID=? AND Instance=?';
     my $sth      = $dbh->prepare ($sql);
     my $res      = $sth->execute ($objectId, $serverId);
+    
+    if ($res) {
+        $sql = 'DELETE FROM Object_init_DATA WHERE ObjectID=? AND Instance=?';
+        $sth = $dbh->prepare ($sql);
+        $res = $sth->execute ($objectId, $serverId);
+    }
+    
     return $res;
 }
 
@@ -700,11 +752,16 @@ sub h_vehicle_moved {
     my $p = shift;
     return unless ($p && ref($p) eq 'ARRAY');
     my ($cmd, $objectId, $worldSpace, $fuel) = @$p;
-    unless ($objectId) {
-        print STDERR "Error h_object_delete(): objectId undefined!\n";
+    unless ($objectId && $worldSpace) {
+        print STDERR "Error h_vehicle_moved(): objectId undefined!\n";
         return;
     }
     $objectId =~ s/"//g;
+    
+    unless ( parse_json ($worldSpace) ) {
+        print STDERR "Error h_vehicle_moved($objectId): worldSpace invalid json!\n";
+        return;
+    }
     
     my $serverId = INSTANCE;
     my $sql      = 'UPDATE Object_DATA SET Worldspace=?, Fuel=? WHERE ObjectID=? AND Instance=?';
@@ -723,6 +780,13 @@ sub h_vehicle_damaged {
         return;
     }
     $objectId =~ s/"//g;
+    
+    if ($hitPoints) {
+        unless ( parse_json ($hitPoints) ) {
+            print STDERR "Error h_vehicle_damaged($objectId): hitPoints invalid json!\n";
+            return;
+        }
+    }
     
     $hitPoints ||= '[]';
     $damage    ||= 0;
@@ -748,6 +812,25 @@ sub h_object_publish {
     }
     $characterId =~ s/"//g;
     $objectUID   =~ s/"//g;
+    
+    if ($worldSpace) {
+        unless ( parse_json ($worldSpace) ) {
+            print STDERR "Error h_object_publish($className): worldSpace invalid json!\n";
+            return;
+        }
+    }
+    if ($inventory) {
+        unless ( parse_json ($inventory) ) {
+            print STDERR "Error h_object_publish($className): inventory invalid json!\n";
+            $inventory = '[]';
+        }
+    }
+    if ($hitPoints) {
+        unless ( parse_json ($hitPoints) ) {
+            print STDERR "Error h_object_publish($className): hitPoints invalid json!\n";
+            $hitPoints = '[]';
+        }
+    }
     
     $serverId   ||= INSTANCE;
     $worldSpace ||= '[]';
@@ -789,6 +872,11 @@ sub h_object_uid_update_inventory {
     }
     $objectUID =~ s/"//g;
     
+    unless ( parse_json ($inventory) ) {
+        print STDERR "Error h_object_uid_update_inventory($objectUID): inventory invalid json!\n";
+        return;
+    }
+    
     my $serverId = INSTANCE;
     my $sql      = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectUID=? AND Instance=?';
     my $sth      = $dbh->prepare ($sql);
@@ -811,6 +899,13 @@ sub h_object_uid_delete {
     my $sql      = 'DELETE FROM Object_DATA WHERE ObjectUID=? AND Instance=?';
     my $sth      = $dbh->prepare ($sql);
     my $res      = $sth->execute ($objectUID, $serverId);
+    
+    if ($res) {
+        $sql = 'DELETE FROM Object_init_DATA WHERE ObjectUID=? AND Instance=?';
+        $sth = $dbh->prepare ($sql);
+        $res = $sth->execute ($objectUID, $serverId);
+    }
+    
     return $res;
 }
 
