@@ -42,7 +42,7 @@ my %FN_IPC  = (
 );
 
 my $dbh   = connect_to_db();
-my $coder = JSON::XS->new->ascii(1)->shrink(1)->max_depth(5)->max_size(1048576);
+my $coder = JSON::XS->new->ascii(1)->shrink(1)->allow_nonref(1)->max_depth(5)->max_size(1048576);
 
 mkdir (CACHE_DIR) unless (-d CACHE_DIR);
 
@@ -224,11 +224,11 @@ sub init_login_uid {
     return unless $uid;
     print STDERR "$uid => $name\n";
     
-    my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
-    my $file        = $PLAYERS_DIR.'/'.$uid.'.sqf';
-    return if (-e $file);
+    #my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
+    #my $file        = $PLAYERS_DIR.'/'.$uid.'.sqf';
+    #return if (-e $file);
     
-    h_load_player ([101, $uid, 1, $name]);
+    h_load_player ([101, $uid, INSTANCE, $name]);
 }
 
 # 11
@@ -513,6 +513,12 @@ sub h_player_update {
             $currentState = undef;
         }
     }
+    if ($model) {
+        unless ( parse_json ($model) ) {
+            print STDERR "Error h_player_update(): model invalid json!\n";
+            $model = undef;
+        }
+    }
     
     my $str = '';
     $str .= 'Worldspace='.$dbh->quote($worldSpace).','            if ($worldSpace && $worldSpace ne '[]');
@@ -572,7 +578,7 @@ sub h_player_death {
     # Reset profile
     my $playerId = get_playerId_by_characterId ($characterId);
     if ($playerId) {    
-        h_load_player ([101, $playerId, 1]);
+        h_load_player ([101, $playerId, INSTANCE]);
     } else {
         print STDERR "Error h_player_death('$characterId'): playerId not found!\n";
     }
