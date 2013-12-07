@@ -19,7 +19,7 @@ Installation instructions
    BAD:  "/home/bob/ArmA2ArrowHead"<br>
    http://rutor.org/torrent/240581/
 
-3. Download and install DayZ Epoch Mod 1.0.3 (https://s3.amazonaws.com/dayzepoch/DayZ_Epoch_Client_1.0.3_Release_k1.7z?torrent).
+3. Download and install DayZ Epoch Mod 1.0.3 (http://goo.gl/eS96xa).
 
 4. Run ./install<br>
    Watch the messages - they might inform you whether your installation
