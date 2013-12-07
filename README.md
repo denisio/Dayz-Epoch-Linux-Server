@@ -32,6 +32,7 @@ Installation instructions
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
+   Load v1.0.3 db update "v103update.sql" into Mysql.<br>
    $ chmod +x install server *.sh *.pl<br>
    $ sudo apt-get install libjson-xs-perl<br>
    For 64-bit only:<br>
