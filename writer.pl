@@ -615,6 +615,7 @@ sub h_player_disconnect {
 sub h_stream_objects {
     # Clean
     $dbh->do ('DELETE FROM Object_DATA WHERE ClassName="TentStorage" AND (Inventory="[[[],[]],[[],[]],[[],[]]]" OR Damage=1)');
+    $dbh->do ('DELETE FROM Object_DATA where Damage > 0.9 AND ObjectID > 89');
     
     my $serverId = INSTANCE;
     my $sql      = "SELECT ObjectID, CharacterID, Worldspace, Inventory, Hitpoints, Fuel, Damage 
