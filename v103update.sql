@@ -111,3 +111,37 @@ INSERT IGNORE INTO `Traders_DATA` VALUES(NULL, '["CinderBlocks",1]', 50, '[1,"It
 INSERT IGNORE INTO `Traders_DATA` VALUES(NULL, '["PartPlywoodPack",1]', 200, '[2,"ItemSilverBar10oz",1]', '[1,"ItemSilverBar10oz",1]', 0, 675, 'trade_items');
 INSERT IGNORE INTO `Traders_DATA` VALUES(NULL, '["MortarBucket",1]', 50, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 675, 'trade_items');
 INSERT IGNORE INTO `Traders_DATA` VALUES(NULL, '["PartPlankPack",1]', 200, '[1,"ItemSilverBar10oz",1]', '[5,"ItemSilverBar",1]', 0, 675, 'trade_items');
+
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_Civ",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_RA_TK_GUE_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_TK_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil2_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["KamazOpen_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_Civ",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_RA_TK_GUE_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_TK_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil2_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["KamazOpen_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_Civ",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_RA_TK_GUE_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_TK_EP1_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil2_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["KamazOpen_DZE",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_Civ",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_RA_TK_GUE_EP1_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["V3S_TK_EP1_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["UralCivil2_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["KamazOpen_DZE",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MTVR",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 653, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MtvrRefuel_DZ",2]', 1, '[7,"ItemGoldBar10oz",1]', '[3,"ItemGoldBar10oz",1]', 0, 655, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MTVR",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 586, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MTVR",2]', 1, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 570, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MTVR",2]', 0, '[1,"ItemGoldBar10oz",1]', '[5,"ItemGoldBar",1]', 0, 564, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MtvrRefuel_DZ",2]', 0, '[7,"ItemGoldBar10oz",1]', '[3,"ItemGoldBar10oz",1]', 0, 589, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MtvrRefuel_DZ",2]', 1, '[7,"ItemGoldBar10oz",1]', '[3,"ItemGoldBar10oz",1]', 0, 595, 'trade_any_vehicle');
+INSERT INTO Traders_DATA (`item`, `qty`, `buy`, `sell`, `order`, `tid`, `afile`) VALUES ('["MtvrRefuel_DZ",2]', 1, '[7,"ItemGoldBar10oz",1]', '[3,"ItemGoldBar10oz",1]', 0, 492, 'trade_any_vehicle');
+
