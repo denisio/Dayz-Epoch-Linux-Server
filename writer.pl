@@ -10,12 +10,13 @@ use warnings;
 use strict;
 
 use constant {
-    INSTANCE  => 11,      # Chernarus
+    INSTANCE  => 11,      # Chernarus instance
     DB_NAME   => 'epoch', # Set database name
     DB_LOGIN  => 'dayz',  # Set database login
     DB_PASSWD => 'dayz',  # Set database password
 
     CACHE_DIR => $ENV{'PWD'}.'/cache/',
+    # Start inventory of player
     INVENTORY => '[["ItemFlashlight","ItemMap","ItemGPS","MeleeCrowbar"],["ItemBandage","ItemPainkiller","ItemSodaPepsi","ItemSodaCoke","FoodbeefCooked"]]',
     BACKPACK  => '["DZ_Patrol_Pack_EP1",[],[]]',
     MODEL     => '"Survivor2_DZ"'
@@ -36,8 +37,7 @@ my %FN_IPC  = (
     306 => \&h_vehicle_damaged,
     308 => \&h_object_publish,
     309 => \&h_object_uid_update_inventory,
-    310 => \&h_object_uid_delete,
-    
+    310 => \&h_object_uid_delete,    
     398 => \&h_trade_object,
 );
 
@@ -172,9 +172,9 @@ sub update_player_cache {
                TIMESTAMPDIFF(MINUTE, LastDrank, NOW()) as MinsLastDrank,
                Model, Humanity, KillsZ, HeadshotsZ, KillsH, KillsB, CurrentState, Medical 
                FROM Character_DATA
-               WHERE PlayerUID=? AND Alive = 1 ORDER BY CharacterID DESC LIMIT 1";
+               WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1";
     my $sth = $dbh->prepare ($sql);
-    my $res = $sth->execute ($playerId);
+    my $res = $sth->execute ($playerId, INSTANCE);
     #return unless $res;
     
     my ($characterId, $worldSpace, $inventory, $backpack, $survivalTime, $minsLastAte, $minsLastDrank, $model,
@@ -261,6 +261,7 @@ sub h_load_player {
         return;
     }
     $playerId =~ s/"//g;
+    $serverId ||= INSTANCE;
     
     my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
     mkdir ($PLAYERS_DIR) unless (-d $PLAYERS_DIR);
@@ -296,9 +297,9 @@ sub h_load_player {
             TIMESTAMPDIFF(MINUTE, LastDrank, NOW()) as MinsLastDrank,
             Model, Medical, Humanity, KillsZ, HeadshotsZ, KillsH, KillsB, CurrentState  
             FROM  Character_DATA 
-            WHERE PlayerUID=? AND Alive = 1 ORDER BY CharacterID DESC LIMIT 1";
+            WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1";
     $sth = $dbh->prepare ($sql);
-    $res = $sth->execute ($playerId);
+    $res = $sth->execute ($playerId, $serverId);
     
     my ($characterId, $worldSpace, $inventory, $backpack, $survivalTime, $minsLastAte, $minsLastDrank, 
         $model, $medical, $humanity, $killsZ, $headshotsZ, $killsH, $killsB, $currentState) = $sth->fetchrow_array;
@@ -333,9 +334,9 @@ sub h_load_player {
         $newChar = 1;
         
         $sql = "SELECT Generation, Humanity, Model FROM Character_DATA 
-                WHERE PlayerUID=? AND Alive = 0 ORDER BY CharacterID DESC LIMIT 1";
+                WHERE PlayerUID=? AND Alive = 0 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1";
         $sth = $dbh->prepare ($sql);
-        $res = $sth->execute ($playerId);
+        $res = $sth->execute ($playerId, $serverId);
         
         my ($generation, $humanity, $cmodel) = $sth->fetchrow_array;
         $sth->finish;
@@ -355,9 +356,9 @@ sub h_load_player {
         $sth = $dbh->prepare ($sql);
         $res = $sth->execute ($playerId, $serverId, $worldSpace, $inventory, $backpack, $medical, $generation, $humanity);
         
-        $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 ORDER BY CharacterID DESC LIMIT 1';
+        $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1';
         $sth = $dbh->prepare ($sql);
-        $res = $sth->execute ($playerId);
+        $res = $sth->execute ($playerId, $serverId);
         
         ($characterId) = $sth->fetchrow_array;
         $sth->finish;
@@ -381,7 +382,6 @@ sub h_load_player {
     close (OUT);
     
     print STDERR "Save player: $file\n";
-    
     return $res;
 }
 
@@ -398,9 +398,9 @@ sub h_load_character {
     $playerId    =~ s/"//g;
     
     if ($characterId == 1 && $playerId) {
-        my $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 ORDER BY CharacterID DESC LIMIT 1';
+        my $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1';
         my $sth = $dbh->prepare ($sql);
-        my $res = $sth->execute ($playerId);
+        my $res = $sth->execute ($playerId, INSTANCE);
         return unless $res;
         
         ($characterId) = $sth->fetchrow_array;
@@ -438,7 +438,6 @@ sub h_load_character {
     close (OUT);
     
     print STDERR "Save character: $file\n";
-    
     return $res;
 }
 
@@ -584,23 +583,6 @@ sub h_player_death {
     }
 }
 
-# 203
-sub h_player_init {
-    my $p = shift;
-    return unless ($p && ref($p) eq 'ARRAY');
-    my ($cmd, $characterId, $inventory, $backpack) = @$p;
-    unless ($characterId) {
-        print STDERR "Error h_player_init(): characterId undefined!\n";
-        return;
-    }
-    $characterId =~ s/"//g;
-    
-    #my $sql = 'UPDATE Character_DATA SET Inventory=?, Backpack=? WHERE CharacterID=?';
-    #my $sth = $dbh->prepare ($sql);
-    #my $res = $sth->execute ($inventory, $backpack, $characterId);
-    #return $res;
-}
-
 # 204
 sub h_player_disconnect {
     my $p = shift;
@@ -613,15 +595,17 @@ sub h_player_disconnect {
 
 # 302
 sub h_stream_objects {
-    # Clean
-    $dbh->do ('DELETE FROM Object_DATA WHERE ClassName="TentStorage" AND (Inventory="[[[],[]],[[],[]],[[],[]]]" OR Damage=1)');
-    $dbh->do ('DELETE FROM Object_DATA where Damage > 0.9 AND ObjectID > 89');
+    # Clean objects
+    for my $sql ('DELETE FROM Object_DATA WHERE Instance=? AND ClassName="TentStorage" AND (Inventory="[[[],[]],[[],[]],[[],[]]]" OR Damage=1)',
+                 'DELETE FROM Object_DATA where Instance=? AND Damage > 0.9 AND ObjectID > 89') {
+        my $sth = $dbh->prepare ($sql);
+        $sth->execute (INSTANCE);
+    }
     
-    my $serverId = INSTANCE;
-    my $sql      = "SELECT ObjectID, CharacterID, Worldspace, Inventory, Hitpoints, Fuel, Damage 
-                    FROM Object_init_DATA WHERE Instance=? AND Classname IS NOT NULL ORDER BY ObjectID";
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($serverId);
+    my $sql = "SELECT ObjectID, CharacterID, Worldspace, Inventory, Hitpoints, Fuel, Damage 
+                 FROM Object_init_DATA WHERE Instance=? AND Classname IS NOT NULL ORDER BY ObjectID";
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute (INSTANCE);
     return unless $res;
     
     my %init = ();
@@ -642,11 +626,10 @@ sub h_stream_objects {
     $sql = "SELECT ObjectID, Classname, CharacterID, Worldspace, Inventory, Hitpoints, Fuel, Damage
             FROM Object_DATA WHERE Instance=? AND Classname IS NOT NULL ORDER BY ObjectID";
     $sth = $dbh->prepare ($sql);
-    $res = $sth->execute ($serverId);
+    $res = $sth->execute (INSTANCE);
     return unless $res;
     
-    my $chunk = 0;
-    my $str   = '';
+    my $str     = '';
     my @updates = ();
     while (my ($objId, $className, $ownerId, $worldSpace, $inventory, $hitpoints, $fuel, $damage) = $sth->fetchrow_array) {
         if ( $objId && $damage && $damage > 0.7 && $init{$objId} ) {
@@ -665,24 +648,8 @@ sub h_stream_objects {
         $fuel   = sprintf ("%.3f", $fuel);
         $damage = sprintf ("%.3f", $damage);
         
-        my $obj = '["OBJ","'.$objId.'","'.$className.'","'.$ownerId.'",'.$worldSpace.','.$inventory.','.$hitpoints.','.$fuel.','.$damage.']';
-        
-        if (length($obj) > 1300) {
-            print STDERR "SKIP OBJ: $objId\n";
-            next;
-        }
-        
-        if (length($str) + length($obj) > 1500) {
-            my $file = CACHE_DIR.'objects'.($chunk || '').'.sqf';
-            open  (OUT, ">$file");
-            print OUT '['.$str.']';
-            close (OUT);
-            $str = '';
-            $chunk++;
-        }
-        
         $str .= ',' if $str;
-        $str .= $obj;
+        $str .= '["OBJ","'.$objId.'","'.$className.'","'.$ownerId.'",'.$worldSpace.','.$inventory.','.$hitpoints.','.$fuel.','.$damage.']';
     }
     $sth->finish;
     
@@ -690,20 +657,14 @@ sub h_stream_objects {
         my ($ownerId, $worldSpace, $inventory, $hitpoints, $fuel, $damage) = @{$init{$objId}};
         $sql = 'UPDATE Object_DATA SET CharacterID=?, Worldspace=?, Inventory=?, Hitpoints=?, Fuel=?, Damage=? WHERE Instance=? AND ObjectID=?';
         $sth = $dbh->prepare ($sql);
-        $res = $sth->execute ($ownerId, $worldSpace, $inventory, $hitpoints, $fuel, $damage, $serverId, $objId);
-    }
+        $res = $sth->execute ($ownerId, $worldSpace, $inventory, $hitpoints, $fuel, $damage, INSTANCE, $objId);
+    }    
+    return unless $str;
     
-    return unless $str;  
-    
-    my $file = CACHE_DIR.'objects'.($chunk || '').'.sqf';
+    my $file = CACHE_DIR.'objects.sqf';
     open  (OUT, ">$file");
     print OUT '['.$str.']';
-    close (OUT);
-    
-    $file = CACHE_DIR.'object_chunks.sqf';
-    open  (OUT, ">$file");
-    print OUT $chunk;
-    close (OUT);
+    close (OUT);    
 }
 
 # 303
@@ -722,10 +683,9 @@ sub h_object_update_inventory {
         return;
     }
     
-    my $serverId = INSTANCE;
-    my $sql      = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($inventory, $objectId, $serverId);
+    my $sql = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($inventory, $objectId, INSTANCE);
     return $res;
 }
 
@@ -740,17 +700,15 @@ sub h_object_delete {
     }
     $objectId =~ s/"//g;
     
-    my $serverId = 1;
-    my $sql      = 'DELETE FROM Object_DATA WHERE ObjectID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($objectId, $serverId);
+    my $sql = 'DELETE FROM Object_DATA WHERE ObjectID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($objectId, INSTANCE);
     
     if ($res) {
         $sql = 'DELETE FROM Object_init_DATA WHERE ObjectID=? AND Instance=?';
         $sth = $dbh->prepare ($sql);
-        $res = $sth->execute ($objectId, $serverId);
-    }
-    
+        $res = $sth->execute ($objectId, INSTANCE);
+    }    
     return $res;
 }
 
@@ -770,10 +728,9 @@ sub h_vehicle_moved {
         return;
     }
     
-    my $serverId = INSTANCE;
-    my $sql      = 'UPDATE Object_DATA SET Worldspace=?, Fuel=? WHERE ObjectID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($worldSpace, $fuel, $objectId, $serverId);
+    my $sql = 'UPDATE Object_DATA SET Worldspace=?, Fuel=? WHERE ObjectID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($worldSpace, $fuel, $objectId, INSTANCE);
     return $res;
 }
 
@@ -798,15 +755,11 @@ sub h_vehicle_damaged {
     $hitPoints ||= '[]';
     $damage    ||= 0;
     
-    my $serverId = INSTANCE;
-    my $sql      = 'UPDATE Object_DATA SET Hitpoints=?, Damage=? WHERE ObjectID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($hitPoints, $damage, $objectId, $serverId);
+    my $sql = 'UPDATE Object_DATA SET Hitpoints=?, Damage=? WHERE ObjectID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($hitPoints, $damage, $objectId, INSTANCE);
     return $res;
 }
-
-# 307
-sub h_get_date_time {}
 
 # 308
 sub h_object_publish {
@@ -853,9 +806,9 @@ sub h_object_publish {
     my $res = $sth->execute ($objectUID, $serverId, $className, $damage, $characterId, $worldSpace, $inventory, $hitPoints, $fuel);
     
     # Cache object ID
-    $sql = 'SELECT ObjectID FROM Object_DATA WHERE ObjectUID=?';
+    $sql = 'SELECT ObjectID FROM Object_DATA WHERE ObjectUID=? AND Instance=?';
     $sth = $dbh->prepare ($sql);
-    $res = $sth->execute ($objectUID);
+    $res = $sth->execute ($objectUID, $serverId);
     return unless $res;
                 
     my ($objectId) = $sth->fetchrow_array;
@@ -884,10 +837,9 @@ sub h_object_uid_update_inventory {
         return;
     }
     
-    my $serverId = INSTANCE;
-    my $sql      = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectUID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($inventory, $objectUID, $serverId);
+    my $sql = 'UPDATE Object_DATA SET Inventory=? WHERE ObjectUID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($inventory, $objectUID, INSTANCE);
     return $res;
 }
 
@@ -902,25 +854,23 @@ sub h_object_uid_delete {
     }
     $objectUID =~ s/"//g;
     
-    my $serverId = INSTANCE;
-    my $sql      = 'DELETE FROM Object_DATA WHERE ObjectUID=? AND Instance=?';
-    my $sth      = $dbh->prepare ($sql);
-    my $res      = $sth->execute ($objectUID, $serverId);
+    my $sql = 'DELETE FROM Object_DATA WHERE ObjectUID=? AND Instance=?';
+    my $sth = $dbh->prepare ($sql);
+    my $res = $sth->execute ($objectUID, INSTANCE);
     
     if ($res) {
         $sql = 'DELETE FROM Object_init_DATA WHERE ObjectUID=? AND Instance=?';
         $sth = $dbh->prepare ($sql);
-        $res = $sth->execute ($objectUID, $serverId);
+        $res = $sth->execute ($objectUID, INSTANCE);
     }
-    
     return $res;
 }
 
 # 388 - loadObjectID
 sub h_load_objects_id {
-    my $sql = 'SELECT ObjectID, ObjectUID FROM Object_DATA ORDER BY ObjectUID';
+    my $sql = 'SELECT ObjectID, ObjectUID FROM Object_DATA WHERE Instance=? ORDER BY ObjectUID';
     my $sth = $dbh->prepare ($sql);
-    my $res = $sth->execute ();
+    my $res = $sth->execute (INSTANCE);
     #return unless $res;
     
     while (my ($objectId, $objectUID) = $sth->fetchrow_array) {
