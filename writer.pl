@@ -659,7 +659,7 @@ sub h_stream_objects {
         $sth = $dbh->prepare ($sql);
         $res = $sth->execute ($ownerId, $worldSpace, $inventory, $hitpoints, $fuel, $damage, INSTANCE, $objId);
     }    
-    return unless $str;
+    #return unless $str;
     
     my $file = CACHE_DIR.'objects.sqf';
     open  (OUT, ">$file");
