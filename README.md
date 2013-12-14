@@ -33,17 +33,16 @@ Installation instructions
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
    Load v1.0.3 db update "v103update.sql" into Mysql.<br>
-   $ chmod +x install server *.sh *.pl<br>
-   $ sudo apt-get install libjson-xs-perl<br>
-   For 64-bit only:<br>
-   $ sudo apt-get install lib32stdc++6 
 
-6. Run ./epoch.sh for test<br>
+6. Install the required packages:
+   $ sudo apt-get install libjson-xs-perl<br>
+   $ sudo apt-get install libdbd-mysql-perl<br>
+   For 64-bit only:<br>
+   $ sudo apt-get install lib32stdc++6
+
+7. Run ./epoch.sh for test<br>
    Watch the messages - they might inform you whether your installation failed!
 
-7. Run ./restarter.pl<br>
+8. Run ./restarter.pl<br>
    $ screen -r
-
-
-
-
+   Press Ctrl+A+D to detach the screen.
