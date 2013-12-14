@@ -1,14 +1,14 @@
 Dayz-Epoch-Linux-Server
 =======================
 
-A private hive DayZ Epoch 1.0.3 server on Linux
+A private hive DayZ Epoch 1.0.3.1 server on Linux
 
 Installation instructions
 =========================
 
-1. The following programs must be installed on your Linux system: screen, tar, gcc, perl, mysql.
+1. The following programs must be installed on your Linux system: screen, gcc, perl, mysql.
 
-2. Download and install newest ArmA beta patch (http://www.arma2.com/beta-patch.php).
+2. Download and install ArmA beta patch (http://www.arma2.com/downloads/update/beta/ARMA2_OA_Build_108074.zip).
 
 3. Copy the whole "ArmA 2: Operation Arrowhead" directory from Windows to server Linux-directory.<br>
    ArmA2 directory should contain subdirectories "Addons", "Dta", "Expansion", etc.<br>
@@ -19,11 +19,11 @@ Installation instructions
    BAD:  "/home/bob/ArmA2ArrowHead"<br>
    http://rutor.org/torrent/240581/
 
-3. Download and install DayZ Epoch Mod 1.0.3 (http://goo.gl/eS96xa).
+3. Download and install DayZ Epoch Mod 1.0.3.1 (http://goo.gl/hNJIDA).
 
 4. Run ./install<br>
    Watch the messages - they might inform you whether your installation
-   failed. Double check that all directories were renamed to lower case.
+   failed! Double check that all directories were renamed to lower case.
    Remove any .dll files you might still find (in battleye, expansion and
    expansion/battleye directories).<br>
    When adding mission .pbo's or mods remember to run ./tolower again or
@@ -39,7 +39,7 @@ Installation instructions
    $ sudo apt-get install lib32stdc++6 
 
 6. Run ./epoch.sh for test<br>
-   Watch the messages - they might inform you whether your installation failed.
+   Watch the messages - they might inform you whether your installation failed!
 
 7. Run ./restarter.pl<br>
    $ screen -r
