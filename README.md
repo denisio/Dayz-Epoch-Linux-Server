@@ -28,7 +28,7 @@ Installation instructions
    expansion/battleye directories).<br>
    When adding mission .pbo's or mods remember to run ./tolower again or
    manually change the filenames to lowercase.<br>
-   <font color=red><b>ANY uppercase letter in a filename will crash the server!</b></font><br>
+   <b>ANY uppercase letter in a filename will crash the server!</b><br>
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
