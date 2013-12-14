@@ -7,8 +7,9 @@
 use warnings;
 use strict;
 
-use constant PATH      => $ENV{'PWD'}.'/'; # Set your dayz server dir
-use constant PIDFILE   => PATH.'2302.pid';
+use constant PORT      => 2302; # Change it with epoch.sh
+use constant PATH      => $ENV{'PWD'}.'/'; # Set your epoch server dir
+use constant PIDFILE   => PATH.PORT.'.pid';
 use constant CACHE_DIR => PATH.'cache/players';
 
 unless (-f PATH.'epoch') {
@@ -45,12 +46,13 @@ sub set_time {
     $y += 1900;
     $mon++;
     
-    ($h, $m) = (20, 0) if ($h > 20 || ($h >= 0 && $h < 4));
+    # Uncomment to disabe night
+    #($h, $m) = (17, 0) if ($h > 17 || ($h >= 0 && $h < 4));
     
     my $file = PATH.'cache/set_time.sqf';
     open  (IN, ">$file") or die "Can't find $file";
-    #print IN '["PASS",['.$y.','.$mon.','.$day.','.$h.','.$m.']]';
-    print IN '["PASS",[2012,6,6,'.$h.','.$m.']]';
+    # ["PASS", [year, month, day, hour, minute]]
+    print IN '["PASS",[2012,6,6,'.$h.','.$m.']]'; # with full moon
     close (IN);
 }
 
