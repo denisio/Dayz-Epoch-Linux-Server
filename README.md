@@ -44,5 +44,5 @@ Installation instructions
    Watch the messages - they might inform you whether your installation failed!
 
 8. Run ./restarter.pl<br>
-   $ screen -r
+   $ screen -r<br>
    Press Ctrl+A+D to detach the screen.
