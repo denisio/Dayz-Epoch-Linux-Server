@@ -27,14 +27,14 @@ Installation instructions
    Remove any .dll files you might still find (in battleye, expansion and
    expansion/battleye directories).<br>
    When adding mission .pbo's or mods remember to run ./tolower again or
-   manually change the filenames to lowercase.<br> ANY uppercase letter in
-   a filename will crash the server!<br>
+   manually change the filenames to lowercase.<br>
+   <font color=red><b>ANY uppercase letter in a filename will crash the server!</b></font><br>
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
    Load v1.0.3 db update "v103update.sql" into Mysql.<br>
 
-6. Install the required packages:
+6. Install the required packages:<br>
    $ sudo apt-get install libjson-xs-perl<br>
    $ sudo apt-get install libdbd-mysql-perl<br>
    For 64-bit only:<br>
