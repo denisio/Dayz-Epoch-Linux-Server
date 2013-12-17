@@ -33,10 +33,10 @@ Installation instructions
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
    Load v1.0.3 db update "v103update.sql" into Mysql.<br>
-   <pre>$ mysql -u root -p mysql<br>
-   mysql> create database epoch_test;<br>
-   mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY '1275';<br>
-   mysql> source database.sql;<br>
+   <pre>$ mysql -u root -p mysql
+   mysql> create database epoch_test;
+   mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY '1275';
+   mysql> source database.sql;
    mysql> source v103update.sql;</bre>
 
 6. Install the required packages:<br>
