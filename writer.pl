@@ -22,10 +22,17 @@ use constant {
     MODEL     => '"Survivor2_DZ"'
 };
 
+my %cid_inv = ();
+my %obj_inv = ();
+
 my $myPlayerCounter = 1;
 
 my %FN_IPC  = (
     11  => \&h_player_counter,
+    21  => \&h_player_split_inventory,
+    22  => \&h_player_split_backpack,
+    33  => \&h_object_split_inventory,
+    39  => \&h_object_uid_split_inventory,
     101 => \&h_load_player,
     103 => \&h_log_login,
     201 => \&h_player_update,
@@ -249,6 +256,153 @@ sub h_player_counter {
     }
     
     $myPlayerCounter = $counter;
+}
+
+# 21
+sub h_player_split_inventory {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $cid, $idx, $data) = @$p;
+    unless ($cid && defined $idx && defined $data) {
+        print STDERR "Error h_player_split_inventory(): characterId or idx or data undefined!\n";
+        return;
+    }
+
+    unless ( parse_json ($data) ) {
+        print STDERR "Error h_player_split_inventory(): data invalid json!\n";
+        $cid_inv{$cid} = undef;
+        return;
+    }
+
+    # Save weapons
+    if ($idx == 0) {
+        $cid_inv{$cid} = $data;
+        return;
+    }
+    # Save weapons + magazines
+    if ($idx == 1 && $cid_inv{$cid}) {
+        my $inv        = '['.$cid_inv{$cid}.','.$data.']';
+        $cid_inv{$cid} = undef;
+        print STDERR "Size plr inv: ".length($inv)."\n";
+
+        unless ( parse_json($inv) ) {
+            print STDERR "Error h_player_split_inventory(): inventory invalid json!\n";
+            return;
+        }
+
+        my $sth = $dbh->prepare ('UPDATE Character_DATA SET Inventory=? WHERE CharacterID=?');
+        my $res = $sth->execute ($cid, $inv);
+        return $res;
+    }
+}
+
+# 22
+sub h_player_split_backpack {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $cid, $data) = @$p;
+    unless ($cid && defined $data) {
+        print STDERR "Error h_player_split_backpack(): characterId or data undefined!\n";
+        return;
+    }
+
+    unless ( parse_json ($data) ) {
+        print STDERR "Error h_player_split_backpack(): backpack invalid json!\n";
+        return;
+    }
+    return if ($data eq '[]');
+
+    my $sth = $dbh->prepare ('UPDATE Character_DATA SET Backpack=? WHERE CharacterID=?');
+    my $res = $sth->execute ($cid, $data);
+    return $res;
+}
+
+# 33
+sub h_object_split_inventory {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $oid, $idx, $data) = @$p;
+    unless ($oid && defined $idx && defined $data) {
+        print STDERR "Error h_object_split_inventory(): objectId or idx or data undefined!\n";
+        return;
+    }
+    $oid =~ s/"//g;
+
+    unless ( parse_json ($data) ) {
+        print STDERR "Error h_object_split_inventory($oid): data invalid json!\n";
+        $obj_inv{$oid} = undef;
+        return;
+    }
+
+    # Save weapons
+    if ($idx == 0) {
+        $obj_inv{$oid} = $data;
+        return;
+    }
+    # Save weapons + magazines
+    if ($idx == 1 && $obj_inv{$oid}) {
+        $obj_inv{$oid} .= ','.$data;
+        return;
+    }
+    # Save weapons + magazines + backpack
+    if ($idx == 2 && $obj_inv{$oid}) {
+        my $inv        = '['.$obj_inv{$oid}.','.$data.']';
+        $obj_inv{$oid} = undef;
+        print STDERR "Size obj inv: ".length($inv)."\n";
+
+        unless ( parse_json($inv) ) {
+            print STDERR "Error h_object_split_inventory($oid): inventory invalid json!\n";
+            return;
+        }
+
+        my $sth = $dbh->prepare ('UPDATE Object_DATA SET Inventory=? WHERE ObjectID=? AND Instance=?');
+        my $res = $sth->execute ($inv, $oid, INSTANCE);
+        return $res;
+    }
+}
+
+# 39
+sub h_object_uid_split_inventory {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $uid, $idx, $data) = @$p;
+    unless ($uid && defined $idx && defined $data) {
+        print STDERR "Error h_object_uid_split_inventory(): objectUID or idx or data undefined!\n";
+        return;
+    }
+    $uid =~ s/"//g;
+
+    unless ( parse_json ($data) ) {
+        print STDERR "Error h_object_uid_split_inventory($uid): data invalid json!\n";
+        $obj_inv{$uid} = undef;
+        return;
+    }
+
+    # Save weapons
+    if ($idx == 0) {
+        $obj_inv{$uid} = $data;
+        return;
+    }
+    # Save weapons + magazines
+    if ($idx == 1 && $obj_inv{$uid}) {
+        $obj_inv{$uid} .= ','.$data;
+        return;
+    }
+    # Save weapons + magazines + backpack
+    if ($idx == 2 && $obj_inv{$uid}) {
+        my $inv        = '['.$obj_inv{$uid}.','.$data.']';
+        $obj_inv{$uid} = undef;
+        print STDERR "Size obj uid inv: ".length($inv)."\n";
+
+        unless ( parse_json($inv) ) {
+            print STDERR "Error h_object_uid_split_inventory($uid): inventory invalid json!\n";
+            return;
+        }
+
+        my $sth = $dbh->prepare ('UPDATE Object_DATA SET Inventory=? WHERE ObjectUID=? AND Instance=?');
+        my $res = $sth->execute ($inv, $uid, INSTANCE);
+        return $res;
+    }
 }
 
 # 101
