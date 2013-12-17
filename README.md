@@ -51,3 +51,6 @@ Installation instructions
 8. Run ./restarter.pl<br>
    $ screen -r<br>
    Press Ctrl+A+D to detach the screen.
+
+Please do not forget that the production server must run by "restarter.pl" !
+
