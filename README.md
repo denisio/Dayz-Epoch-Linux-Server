@@ -36,6 +36,7 @@ Installation instructions
    <pre>$ mysql -u root -p mysql
    mysql> create database epoch;
    mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY 'dayz';
+   mysql> use epoch;
    mysql> source database.sql;
    mysql> source v103update.sql;</bre>
 
