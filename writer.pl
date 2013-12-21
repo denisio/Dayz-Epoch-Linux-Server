@@ -414,7 +414,7 @@ sub h_load_player {
         print STDERR "Error h_load_player(): playerId or serverId undefined!\n";
         return;
     }
-    $playerId =~ s/"//g;
+    $playerId =~ s/[A-Z"]//g;
     $serverId ||= INSTANCE;
     
     my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
@@ -549,7 +549,7 @@ sub h_load_character {
         return;
     }
     $characterId =~ s/"//g;
-    $playerId    =~ s/"//g;
+    $playerId    =~ s/[A-Z"]//g;
     
     if ($characterId == 1 && $playerId) {
         my $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1';
@@ -604,7 +604,7 @@ sub h_log_login {
         print STDERR "Error h_log_login(): playerId undefined!\n";
         return;
     }
-    $playerId    =~ s/"//g;
+    $playerId    =~ s/[A-Z"]//g;
     $characterId =~ s/"//g;
     
     my $sql = 'INSERT INTO Player_LOGIN(PlayerUID, CharacterID, Datestamp, Action) VALUES (?, ?, CURRENT_TIMESTAMP, ?)';
@@ -742,7 +742,7 @@ sub h_player_disconnect {
     my $p = shift;
     return unless ($p && ref($p) eq 'ARRAY');
     my ($cmd, $playerId) = @$p;
-    $playerId =~ s/"//g;
+    $playerId =~ s/[A-Z"]//g;
     
     update_player_cache ($playerId);
 }
