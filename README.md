@@ -32,13 +32,13 @@ Installation instructions
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
-   Load v1.0.3 db update "v103update.sql" into Mysql.<br>
+   Load v1.0.4.2 db update "v1042update.sql" into Mysql.<br>
    <pre>$ mysql -u root -p mysql
    mysql> create database epoch;
    mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY 'dayz';
    mysql> use epoch;
    mysql> source database.sql;
-   mysql> source v103update.sql;</bre>
+   mysql> source v1042update.sql;</bre>
 
 6. Install the required packages:<br>
    $ sudo apt-get install libjson-xs-perl<br>
