@@ -1,7 +1,7 @@
 Dayz-Epoch-Linux-Server
 =======================
 
-A private hive DayZ Epoch 1.0.3.1 server on Linux
+A private hive DayZ Epoch 1.0.4.2 server on Linux
 
 Installation instructions
 =========================
@@ -19,7 +19,7 @@ Installation instructions
    BAD:  "/home/bob/ArmA2ArrowHead"<br>
    http://rutor.org/torrent/240581/
 
-3. Download and install DayZ Epoch Mod 1.0.3.1 (http://goo.gl/hNJIDA).
+3. Download and install DayZ Epoch Mod 1.0.4.2 (http://goo.gl/mzhHZW).
 
 4. Run ./install<br>
    Watch the messages - they might inform you whether your installation
