@@ -38,7 +38,8 @@ Installation instructions
    mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY 'dayz';
    mysql> use epoch;
    mysql> source database.sql;
-   mysql> source v1042update.sql;</bre>
+   mysql> source v1042update.sql;
+   mysql> source v1042a_update.sql;</pre>
 
 6. Install the required packages:<br>
    $ sudo apt-get install libjson-xs-perl<br>
