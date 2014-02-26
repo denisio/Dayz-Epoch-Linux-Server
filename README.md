@@ -1,7 +1,7 @@
 Dayz-Epoch-Linux-Server
 =======================
 
-A private hive DayZ Epoch 1.0.4.2 server on Linux
+A private hive DayZ Epoch 1.0.4.2a server on Linux
 
 Installation instructions
 =========================
@@ -32,7 +32,7 @@ Installation instructions
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
-   Load v1.0.4.2 db update "v1042update.sql" into Mysql.<br>
+   Load v1.0.4.2 db update "v1042update.sql" and "v1042a_update.sql" into Mysql.<br>
    <pre>$ mysql -u root -p mysql
    mysql> create database epoch;
    mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY 'dayz';
