@@ -52,7 +52,7 @@ CREATE TABLE `Object_DATA` (
   `CharacterID` int(11) unsigned NOT NULL DEFAULT '0',
   `Worldspace` varchar(70) NOT NULL DEFAULT '[]',
   `Inventory` longtext,
-  `Hitpoints` varchar(512) NOT NULL DEFAULT '[]',
+  `Hitpoints` varchar(4096) NOT NULL DEFAULT '[]',
   `Fuel` double(13,5) NOT NULL DEFAULT '1.00000',
   `Damage` double(13,5) NOT NULL DEFAULT '0.00000',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
