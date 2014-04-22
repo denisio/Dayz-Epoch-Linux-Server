@@ -31,6 +31,7 @@ my %FN_IPC  = (
     11  => \&h_player_counter,
     21  => \&h_player_split_inventory,
     22  => \&h_player_split_backpack,
+    31  => \&h_object_change_lock_code,
     33  => \&h_object_split_inventory,
     39  => \&h_object_uid_split_inventory,
     101 => \&h_load_player,
@@ -314,6 +315,22 @@ sub h_player_split_backpack {
 
     my $sth = $dbh->prepare ('UPDATE Character_DATA SET Backpack=? WHERE CharacterID=?');
     my $res = $sth->execute ($cid, $data);
+    return $res;
+}
+
+# 31
+sub h_object_change_lock_code {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $oid, $code) = @$p;
+    unless ($oid && $code) {
+        print STDERR "Error h_object_change_lock_code(): objectId or code undefined!\n";
+        return;
+    }
+    $oid =~ s/"//g;
+    
+    my $sth = $dbh->prepare ('UPDATE Object_DATA SET CharacterID=? WHERE ObjectID=? AND Instance=?');
+    my $res = $sth->execute ($code, $oid, INSTANCE);
     return $res;
 }
 
