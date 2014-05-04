@@ -45,7 +45,9 @@ my %FN_IPC  = (
     306 => \&h_vehicle_damaged,
     308 => \&h_object_publish,
     309 => \&h_object_uid_update_inventory,
-    310 => \&h_object_uid_delete,    
+    310 => \&h_object_uid_delete,
+    396 => \&h_object_reset_damage,
+    397 => \&h_object_uid_reset_damage,
     398 => \&h_trade_object,
 );
 
@@ -1053,6 +1055,38 @@ sub h_load_objects_id {
         close (OUT);
     }
     $sth->finish;
+}
+
+# 396
+sub h_object_reset_damage {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $oid) = @$p;
+    unless ($oid) {
+        print STDERR "Error h_object_reset_damage(): objectId undefined!\n";
+        return;
+    }
+    $oid =~ s/"//g;
+    
+    my $sth = $dbh->prepare ('UPDATE Object_DATA SET Damage=0 WHERE ObjectID=? AND Instance=?');
+    my $res = $sth->execute ($oid, INSTANCE);
+    return $res;
+}
+
+# 397
+sub h_object_uid_reset_damage {
+    my $p = shift;
+    return unless ($p && ref($p) eq 'ARRAY');
+    my ($cmd, $uid) = @$p;
+    unless ($uid) {
+        print STDERR "Error h_object_uid_reset_damage(): objectUID undefined!\n";
+        return;
+    }
+    $uid =~ s/"//g;
+    
+    my $sth = $dbh->prepare ('UPDATE Object_DATA SET Damage=0 WHERE ObjectUID=? AND Instance=?');
+    my $res = $sth->execute ($uid, INSTANCE);
+    return $res;
 }
 
 # 398 - tradeObject 
