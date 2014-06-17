@@ -10,10 +10,12 @@ use warnings;
 use strict;
 
 use constant {
-    INSTANCE  => 11,      # Chernarus instance
-    DB_NAME   => 'epoch', # Set database name
-    DB_LOGIN  => 'dayz',  # Set database login
-    DB_PASSWD => 'dayz',  # Set database password
+    INSTANCE  => 11,          # Chernarus instance
+    DB_NAME   => 'epoch',     # Set database name
+    DB_LOGIN  => 'dayz',      # Set database login
+    DB_PASSWD => 'dayz',      # Set database password
+    DB_HOST   => 'localhost', # Set database host
+    DB_PORT   => 3306,        # Set database port (default 3306)
 
     CACHE_DIR => $ENV{'PWD'}.'/cache/',
     # Start inventory of player
@@ -89,7 +91,7 @@ exit;
 
 #---------------------------------------------------------------------------
 sub connect_to_db {
-    my $dbh = DBI->connect('dbi:mysql:'.DB_NAME, DB_LOGIN, DB_PASSWD,
+    my $dbh = DBI->connect('dbi:mysql:'.DB_NAME.':'.DB_HOST.':'.DB_PORT, DB_LOGIN, DB_PASSWD,
               {'PrintError' => 1, 'RaiseError' => 1, 'AutoCommit' => 1})
               or die "Can't connect to mysql: $!";
     $dbh->{'mysql_auto_reconnect'} = 1;
