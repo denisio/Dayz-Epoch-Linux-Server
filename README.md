@@ -1,7 +1,7 @@
 Dayz-Epoch-Linux-Server
 =======================
 
-A private hive DayZ Epoch 1.0.4.2a server on Linux
+A private hive DayZ Epoch 1.0.5.1 server on Linux
 
 Installation instructions
 =========================
@@ -19,7 +19,7 @@ Installation instructions
    BAD:  "/home/bob/ArmA2ArrowHead"<br>
    http://rutor.org/torrent/240581/
 
-3. Download and install DayZ Epoch Mod 1.0.4.2 (http://goo.gl/mzhHZW).
+3. Download and install DayZ Epoch Mod 1.0.5.1 (http://goo.gl/IN1Pt1).
 
 4. Run ./install<br>
    Watch the messages - they might inform you whether your installation
@@ -32,14 +32,15 @@ Installation instructions
    <pre>$ for x in *; do mv $x `echo $x | tr [A-Z] [a-z]`; done</pre>
 
 5. Create database "epoch" (login: "dayz", password: "dayz") and load "database.sql" into Mysql.<br>
-   Load v1.0.4.2 db update "v1042update.sql" and "v1042a_update.sql" into Mysql.<br>
+   Load v1.0.4.2 and v1.0.5.1 db update "v1042update.sql", "v1042a_update.sql" and "v105_update.sql" into Mysql.<br>
    <pre>$ mysql -u root -p mysql
    mysql> create database epoch;
    mysql> GRANT ALL PRIVILEGES ON epoch.* TO 'dayz'@'localhost' IDENTIFIED BY 'dayz';
    mysql> use epoch;
    mysql> source database.sql;
    mysql> source v1042update.sql;
-   mysql> source v1042a_update.sql;</pre>
+   mysql> source v1042a_update.sql;
+   mysql> source v105_update.sql;</pre>
 
 6. Install the required packages:<br>
    $ sudo apt-get install libjson-xs-perl<br>
