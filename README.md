@@ -39,7 +39,8 @@ Installation instructions
    mysql> use epoch;
    mysql> source database.sql;
    mysql> source v1042update.sql;
-   mysql> source v1042a_update.sql;</pre>
+   mysql> source v1042a_update.sql;
+   mysql> source v1051update.sql;</pre>
 
 6. Install the required packages:<br>
    $ sudo apt-get install libjson-xs-perl<br>
