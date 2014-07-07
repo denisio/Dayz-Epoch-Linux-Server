@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Copyright 2013 by Denis Erygin,
+# Copyright 2014 by Denis Erygin,
 # denis.erygin@gmail.com
 #
 
@@ -10,12 +10,12 @@ use warnings;
 use strict;
 
 use constant {
-    INSTANCE  => 11,          # Chernarus instance
-    DB_NAME   => 'epoch',     # Set database name
-    DB_LOGIN  => 'dayz',      # Set database login
-    DB_PASSWD => 'dayz',      # Set database password
-    DB_HOST   => 'localhost', # Set database host
-    DB_PORT   => 3306,        # Set database port (default 3306)
+    INSTANCE  => 11,           # Chernarus instance
+    DB_NAME   => 'epoch',      # Set database name
+    DB_LOGIN  => 'dayz',       # Set database login
+    DB_PASSWD => 'dayz',       # Set database password
+    DB_HOST   => 'localhost',  # Set database host
+    DB_PORT   => 3306,         # Set database port (default 3306)
 
     CACHE_DIR => $ENV{'PWD'}.'/cache/',
     # Start inventory of player
@@ -146,7 +146,7 @@ sub update_players_cache {
     my @uids = ();
     while (my ($playerId) = $sth->fetchrow_array) {
         next unless $playerId;
-        my $file = $PLAYERS_DIR.'/'.$playerId.'.sqf';
+        my $file = $PLAYERS_DIR.'/'.lc($playerId).'.sqf';
         next if (-f $file);
     
         push @uids, $playerId;
@@ -201,7 +201,7 @@ sub update_player_cache {
     my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
     mkdir ($PLAYERS_DIR) unless (-d $PLAYERS_DIR);
                                                                                  
-    my $file = $PLAYERS_DIR.'/'.$playerId.'.sqf';
+    my $file = $PLAYERS_DIR.'/'.lc($playerId).'.sqf';
     open  (OUT, ">$file") or print STDERR $!;
     print OUT '["PASS",false,"'.$characterId.'",'.$worldSpace.','.$inventory.','.$backpack.','.$survival.','.$model.',0.96]';
     close (OUT);
@@ -209,7 +209,7 @@ sub update_player_cache {
     my $stats = '[0,0,0,0]';
     $stats    = '['.$killsZ.','.$headshotsZ.','.$killsH.','.$killsB.']' if (defined $killsZ && defined $headshotsZ && defined $killsH && defined $killsB);
     
-    $file = $PLAYERS_DIR.'/'.$playerId.'-char.sqf';
+    $file = $PLAYERS_DIR.'/'.lc($playerId).'-char.sqf';
     open  (OUT, ">$file") or print STDERR $!;
     print OUT '["PASS",'.$medical.','.$stats.','.$currentState.','.$worldSpace.','.$humanity.',"'.$characterId.'"]';
     close (OUT);
@@ -230,7 +230,8 @@ sub init_login_uid {
     my ($name, $uid) = split (/\sconnected\s/, $str);
     return unless ($name && $uid);
     
-    if ($uid =~ m/(\d+)/) {
+    #if ($uid =~ m/(\d+)/) {
+    if ($uid =~ m/=(\w+)/) {
         $uid = $1;
     } 
     return unless $uid;
@@ -435,7 +436,7 @@ sub h_load_player {
         print STDERR "Error h_load_player(): playerId or serverId undefined!\n";
         return;
     }
-    $playerId =~ s/[A-Z"]//g;
+    $playerId =~ s/['"]//g;
     $serverId ||= INSTANCE;
     
     my $PLAYERS_DIR = CACHE_DIR.'players/'.$myPlayerCounter;
@@ -501,7 +502,7 @@ sub h_load_player {
         my $stats = '[0,0,0,0]';
         $stats    = '['.$killsZ.','.$headshotsZ.','.$killsH.','.$killsB.']' if (defined $killsZ && defined $headshotsZ &&
                                                                                 defined $killsH && defined $killsB);        
-        my $file = $PLAYERS_DIR.'/'.$playerId.'-char.sqf';
+        my $file = $PLAYERS_DIR.'/'.lc($playerId).'-char.sqf';
         open  (OUT, ">$file");
         print OUT '["PASS",'.$medical.','.$stats.','.$currentState.','.$worldSpace.','.$humanity.',"'.$characterId.'"]';
         close (OUT); 
@@ -542,7 +543,7 @@ sub h_load_player {
         
         if (defined $characterId) {
             print STDERR "Created a new character $characterId for player '$playerName' ($playerId)\n";
-            my $file = $PLAYERS_DIR.'/'.$playerId.'-char.sqf';
+            my $file = $PLAYERS_DIR.'/'.lc($playerId).'-char.sqf';
             open  (OUT, ">$file");
             print OUT '["PASS",'.$medical.',[0,0,0,0],[],'.$worldSpace.','.$humanity.',"'.$characterId.'"]';
             close (OUT);
@@ -551,7 +552,7 @@ sub h_load_player {
         }
     }
     
-    my $file = $PLAYERS_DIR.'/'.$playerId.'.sqf';
+    my $file = $PLAYERS_DIR.'/'.lc($playerId).'.sqf';
     open  (OUT, ">$file");
     print OUT '["PASS",false,"'.$characterId.'",'.$worldSpace.','.$inventory.','.$backpack.','.$survival.','.$model.',0.96]';
     close (OUT);
@@ -570,7 +571,7 @@ sub h_load_character {
         return;
     }
     $characterId =~ s/"//g;
-    $playerId    =~ s/[A-Z"]//g;
+    $playerId    =~ s/['"]//g;
     
     if ($characterId == 1 && $playerId) {
         my $sql = 'SELECT CharacterID FROM Character_DATA WHERE PlayerUID=? AND Alive = 1 AND InstanceID=? ORDER BY CharacterID DESC LIMIT 1';
@@ -607,7 +608,7 @@ sub h_load_character {
     $stats    = '['.$killsZ.','.$headshotsZ.','.$killsH.','.$killsB.']' if (defined $killsZ && defined $headshotsZ && 
                                                                             defined $killsH && defined $killsB);
     
-    my $file = CACHE_DIR.'players/'.$myPlayerCounter.'/'.$playerId.'-char.sqf';
+    my $file = CACHE_DIR.'players/'.$myPlayerCounter.'/'.lc($playerId).'-char.sqf';
     open  (OUT, ">$file");
     print OUT '["PASS",'.$medical.','.$stats.','.$currentState.','.$worldSpace.','.$humanity.',"'.$characterId.'"]';
     close (OUT);
@@ -625,7 +626,7 @@ sub h_log_login {
         print STDERR "Error h_log_login(): playerId undefined!\n";
         return;
     }
-    $playerId    =~ s/[A-Z"]//g;
+    $playerId    =~ s/['"]//g;
     $characterId =~ s/"//g;
     
     my $sql = 'INSERT INTO Player_LOGIN(PlayerUID, CharacterID, Datestamp, Action) VALUES (?, ?, CURRENT_TIMESTAMP, ?)';
