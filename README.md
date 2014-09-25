@@ -1,25 +1,26 @@
-Dayz-Epoch-Linux-Server
-=======================
+Dayz-Epoch-Linux-Server (Steam)
+===============================
 
-A private hive DayZ Epoch 1.0.5.1 server on Linux
+A private hive DayZ Epoch 1.0.5.1 server on Linux (Steam)
 
 Installation instructions
 =========================
 
 1. The following programs must be installed on your Linux system: screen, gcc, perl, mysql.
+   # apt-get install perl screen mysql-server mysql-client
 
-2. Download and install ArmA beta patch (http://www.arma2.com/downloads/update/beta/ARMA2_OA_Build_108074.zip).
+2. Download and unpack steamcmd (http://media.steampowered.com/installer/steamcmd_linux.tar.gz)
 
-3. Copy the whole "ArmA 2: Operation Arrowhead" directory from Windows to server Linux-directory.<br>
-   ArmA2 directory should contain subdirectories "Addons", "Dta", "Expansion", etc.<br>
-   Example: pack with PKZIP (WinZip, PowerArchiver, etc.) on Windows and unpack with "unzip" on Linux.<br>
-   DO NOT use upper case letters in the ArmA2 directory name (or in any files that the server uses 
-   like missions or mods):<br>
-   GOOD: "/home/bob/arma2arrowhead"<br>
-   BAD:  "/home/bob/ArmA2ArrowHead"<br>
-   http://rutor.org/torrent/240581/
+3. Download ARMA II, ARMA II: OA and the beta packages using steamcmd:
+   $ steamcmd/steamcmd.sh +login STEAM_USERNAME STEAM_PASSWORD +force_install_dir /home/user/epoch
+   > @sSteamCmdForcePlatformType windows
+   > app_update 33900 validate
+   > app_update 33910 validate
+   > app_update 33930 validate
+   > app_update 219540 beta112555 validate
+   > quit
 
-3. Download and install DayZ Epoch Mod 1.0.5.1 (http://goo.gl/IN1Pt1).
+   Download and install DayZ Epoch Mod 1.0.5.1 (http://goo.gl/IN1Pt1).
 
 4. Run ./install<br>
    Watch the messages - they might inform you whether your installation
