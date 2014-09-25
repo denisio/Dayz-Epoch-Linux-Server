@@ -7,11 +7,12 @@ Installation instructions
 =========================
 
 1. The following programs must be installed on your Linux system: screen, gcc, perl, mysql.
-   # apt-get install perl screen mysql-server mysql-client
+   <pre># apt-get install perl screen mysql-server mysql-client</pre>
 
 2. Download and unpack steamcmd (http://media.steampowered.com/installer/steamcmd_linux.tar.gz)
 
 3. Download ARMA II, ARMA II: OA and the beta packages using steamcmd:
+   <br><pre>
    $ steamcmd/steamcmd.sh +login STEAM_USERNAME STEAM_PASSWORD +force_install_dir /home/user/epoch
    > @sSteamCmdForcePlatformType windows
    > app_update 33900 validate
@@ -19,7 +20,7 @@ Installation instructions
    > app_update 33930 validate
    > app_update 219540 beta112555 validate
    > quit
-
+   </pre><br>
    Download and install DayZ Epoch Mod 1.0.5.1 (http://goo.gl/IN1Pt1).
 
 4. Run ./install<br>
