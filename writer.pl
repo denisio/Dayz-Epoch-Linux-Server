@@ -689,6 +689,7 @@ sub h_player_update {
         }
     }
     if ($model) {
+        $model = '"'.$model.'"' if (length($model) > 3 && $model !~ m/"/);
         unless ( parse_json ($model) ) {
             print STDERR "Error h_player_update(): model invalid json!\n";
             $model = undef;
